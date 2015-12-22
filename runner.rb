@@ -1,17 +1,27 @@
 require 'date'
+require 'json'
 require './Account'
 require './Payer'
 
-us = Payer.new(2000);
-accts = [Account.new(0.01, 1000, Date.today, us),
-         Account.new(0.01, 1000, Date.today + 1, us),
-         Account.new(0.01, 1000, Date.today + 2, us)]
-puts us
-us.day_calc accts
-puts us
-us.day_calc accts
-puts us
-us.day_calc accts
-puts us
-us.day_calc accts
-puts us
+def get_accounts
+  accts = []
+  Dir.new('accounts').each do |fname|
+    if fname.include? "json" then
+      accts << Account.new(JSON.parse(File.open("./accounts/#{fname}", "rb").read))
+    end
+  end
+    accts
+end
+
+us = Payer.new({balance: 2000});
+accts = get_accounts
+
+def sum_balance accts
+  (accts.map {|this| this.balance}).reduce(:+)
+end
+
+5.times do
+  us.day_calc accts
+  puts "#{us.balance}, #{sum_balance accts}"
+  puts us.to_s
+end

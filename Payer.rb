@@ -1,7 +1,14 @@
 class Payer
-  def initialize balance, today = Date.today
-    @balance = balance
-    @today = today
+  attr_accessor :balance, :today
+
+  def set_defaults
+    @today ||= Date.today
+    @balance ||= 0
+  end
+
+  def initialize params = {}
+    params.each { |key,value| instance_variable_set("@#{key}", value) }
+    set_defaults
   end
 
   def deduct amount
@@ -17,8 +24,7 @@ class Payer
   def day_calc accounts
     accounts.each do |acct|
       acct.compound
-      pay acct, acct.bill
-      puts acct.to_s
+      pay acct, acct.bill(@today)
     end
     @today += 1
   end
