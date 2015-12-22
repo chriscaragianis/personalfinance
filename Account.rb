@@ -1,11 +1,10 @@
 class Account
-  attr_accessor :balance
+  attr_accessor :balance, :name
 
   def set_defaults
     @rate ||= 0
     @balance ||= 0
     @day ||= 1
-    @payer ||= Payer.new({balance: @balance, today: Date.today})
     @min_floor ||= 0
     @min_rate ||= 0
     @name ||= "NAME"

@@ -7,12 +7,14 @@ RSpec.describe Account, '#initialize' do
     it "creates a default Account object" do
       acct = Account.new
       expect(acct.balance).to eq(0)
+      expect(acct.name).to eq("NAME")
     end
   end
-  context "with balance given" do
-    it "creates an Account object with the correct balance" do
-      acct = Account.new({balance: 500})
-      expect(acct.balance).to eq (500)
+  context "with balance and name given" do
+    it "creates an Account object with the correct balance and name" do
+      acct = Account.new({balance: 500, name: "Bank"})
+      expect(acct.balance).to eq(500)
+      expect(acct.name).to eq("Bank")
     end
   end
 end
