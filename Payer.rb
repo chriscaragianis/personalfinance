@@ -17,13 +17,13 @@ class Payer
 
   def pay acct, amount
     deduct amount
-    acct.balance -= amount
+    acct.balance += amount
   end
 
 
   def day_calc accounts
     accounts.each do |acct|
-      acct.compound
+      (acct.respond_to?(:compound)) ? acct.compound : nil
       pay acct, acct.bill(@today)
     end
     @today += 1
