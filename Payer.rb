@@ -4,6 +4,7 @@ class Payer
   def set_defaults
     @today ||= Date.today
     @balance ||= 0
+    @burn ||= 0
   end
 
   def initialize params = {}
@@ -26,6 +27,7 @@ class Payer
       (acct.respond_to?(:compound)) ? acct.compound : nil
       pay acct, acct.bill(@today)
     end
+    deduct @burn
     @today += 1
   end
 
