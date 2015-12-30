@@ -8,14 +8,14 @@ RSpec.describe Paycheck, "#initialize" do
     it "creates a default Paycheck object" do
       acct = Paycheck.new
       expect(acct.balance).to eq(0)
-      expect(acct.name).to eq("NAME")
+      expect(acct.acct_name).to eq("NAME")
     end
   end
   context "with balance and name given" do
     it "creates an Paycheck object with the correct balance and name" do
-      acct = Paycheck.new({balance: 500, name: "Bank"})
+      acct = Paycheck.new({balance: 500, acct_name: "Bank"})
       expect(acct.balance).to eq(500)
-      expect(acct.name).to eq("Bank")
+      expect(acct.acct_name).to eq("Bank")
     end
   end
 end
@@ -33,9 +33,10 @@ RSpec.describe Paycheck, "#bill" do
   end
 
   context "Weekly pay" do
-    acct = Paycheck.new({weekly: true,
+    acct = Paycheck.new({weekly: 1,
                          day: 5,
-                         week: [2, 0],
+                         week_period: 2,
+                         week_offset: 0,
                          amount: -1000})
     it "sends bill of zero on wrong week" do
       expect(acct.bill(Date.new(2016,1,8))).to eq(0)

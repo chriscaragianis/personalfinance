@@ -1,10 +1,11 @@
 class Payer
-  attr_accessor :balance, :today
+  attr_accessor :balance, :today, :payer_name
 
   def set_defaults
     @today ||= Date.today
     @balance ||= 0
     @burn ||= 0
+    @payer_name ||= "NAME"
   end
 
   def initialize params = {}
@@ -24,14 +25,10 @@ class Payer
 
   def day_calc accounts
     accounts.each do |acct|
-      (acct.respond_to?(:compound)) ? acct.compound : nil
+      acct.compound
       pay acct, acct.bill(@today)
     end
     deduct @burn
     @today += 1
-  end
-
-  def to_s
-    "MONEY HAVE: #{@balance} ON: #{@today.to_s}"
   end
 end

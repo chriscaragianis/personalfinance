@@ -23,7 +23,7 @@ RSpec.describe Payer, "#day_calc" do
   before(:all) do
     @payers = []
     3.times {@payers << Payer.new(balance: 1000)}
-    defaults = {rate: 0.01, min_rate: -0.02, min_floor: 100}
+    defaults = {rate: 0.01*365, min_rate: -0.02, min_floor: 100}
     @accts = [Account.new(defaults.merge({day: Date.today.day, balance: -1000})),
              Account.new(defaults.merge({day: Date.today.day + 1, balance: -1000})),
              Account.new(defaults.merge({day: Date.today.day, balance: -10000}))]

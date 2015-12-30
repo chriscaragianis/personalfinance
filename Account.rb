@@ -1,18 +1,25 @@
 class Account
-  attr_accessor :balance, :name
+  attr_accessor :balance, :acct_name
 
   def set_defaults
     @rate ||= 0
     @balance ||= 0
     @min_floor ||= 0
     @min_rate ||= 0
-    @name ||= "NAME"
+    @acct_name ||= "NAME"
     @weekly ||= false
+    @week_offset ||= 0
+    @week_period ||= 0
     @day ||= 0
+    @amount ||= 0
   end
 
   def compound
-    @balance += @balance * @rate
+    @balance += @balance * @rate/365
+  end
+
+  def amount
+    (@amount == 0) ? [@min_rate * @balance, @min_floor].max : @amount
   end
 
   def initialize(params = {})
@@ -21,15 +28,15 @@ class Account
   end
 
   def bill (date)
-    (@weekly) ? weekly_bill(date) : monthly_bill(date)
+    (@weekly == 1) ? weekly_bill(date) : monthly_bill(date)
   end
 
   def weekly_bill (date)
-    (date.cweek % @week[0] == @week[1] && date.cwday == @day) ? [@min_rate * @balance, @min_floor].max : 0
+    (date.cweek % @week_period == @week_offset && date.cwday == @day) ? amount : 0
   end
 
   def monthly_bill (date)
-    (date.day == @day) ? [@min_rate * @balance, @min_floor].max : 0
+    (date.day == @day) ? amount : 0
   end
 
 end
