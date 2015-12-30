@@ -1,8 +1,0 @@
-{
-  "name" : "Bank Two",
-  "balance" : 2500,
-  "rate" : 0.003,
-  "min_floor" : 67,
-  "min_rate" : 0.0015,
-  "day" : 25
-}

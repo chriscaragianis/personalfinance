@@ -1,8 +1,0 @@
-{
-  "name" : "Bank One",
-  "balance" : 2000,
-  "rate" : 0.001,
-  "min_floor" : 13,
-  "min_rate" : 0.0015,
-  "day" : 23
-}
