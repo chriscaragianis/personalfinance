@@ -4,7 +4,7 @@ CREATE SCHEMA pf_test;
 USE pf_test;
 
 CREATE TABLE accounts (
-	acct_id INTEGER,
+	acct_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     acct_name VARCHAR(50),
     balance FLOAT(14),
     rate FLOAT(14),
@@ -24,6 +24,10 @@ CREATE TABLE payers (
     balance FLOAT(14),
     today DATE,
     burn FLOAT(14)
+);
+
+CREATE TABLE results (
+	result_id INTEGER
 );
 
 INSERT INTO payers VALUES (
@@ -50,7 +54,7 @@ INSERT INTO payers VALUES (
     60
 );
 INSERT INTO accounts VALUES (
-	0,
+	1,
     "Paycheck1",
     0,
     0,
@@ -62,7 +66,7 @@ INSERT INTO accounts VALUES (
     0,
     5);
 INSERT INTO accounts VALUES (
-    1,
+    2,
     "CC",
     -1200.0,
     0.28,
@@ -74,7 +78,7 @@ INSERT INTO accounts VALUES (
     0,
     16);
 INSERT INTO accounts VALUES (
-    2,
+    3,
     "Car",
     -5500,
     0.06,
