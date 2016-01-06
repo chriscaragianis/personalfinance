@@ -6,6 +6,7 @@ USE pf_test;
 CREATE TABLE accounts (
 	acct_id INTEGER AUTO_INCREMENT PRIMARY KEY,
     acct_name VARCHAR(50),
+    carry_balance BOOLEAN,
     balance FLOAT(14),
     rate FLOAT(14),
     min_floor FLOAT(14),
@@ -56,6 +57,7 @@ INSERT INTO payers VALUES (
 INSERT INTO accounts VALUES (
 	1,
     "Paycheck1",
+    FALSE,
     0,
     0,
     0,
@@ -68,6 +70,7 @@ INSERT INTO accounts VALUES (
 INSERT INTO accounts VALUES (
     2,
     "CC",
+    TRUE,
     -1200.0,
     0.28,
     0,
@@ -80,6 +83,7 @@ INSERT INTO accounts VALUES (
 INSERT INTO accounts VALUES (
     3,
     "Car",
+    TRUE,
     -5500,
     0.06,
     300,

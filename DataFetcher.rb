@@ -1,7 +1,7 @@
 require './Account'
 class DataFetcher
   @@host = "HOST"
-  @@username = "USERNAME"
+  @@username = "USER"
   @@db_name = "DB_NAME"
   @@password = "PASSWORD"
 
@@ -20,7 +20,7 @@ class DataFetcher
     acct_data = []
     accounts = []
     get_array_from_table("accounts").each do |row|
-      accounts << Account.new(row)
+      (row[:carry_balance] == 1) ? accounts << Account.new(row) : accounts << FixedAccount.new(row)
     end
     accounts
   end
@@ -32,5 +32,27 @@ class DataFetcher
       payers << Payer.new(row)
     end
     payers
+  end
+
+  def self.create_balance_table(table_name, accounts)
+    client = Mysql2::Client.new(:host => "#{@@host}", :username => "#{@@username}", :password => "#{@@password}")
+    client.query("USE #{@@db_name}")
+    columns = ""
+    accounts.each do |acct|
+      columns << "#{acct.acct_name} FLOAT(14),"
+    end
+    columns.chomp!(",")
+    client.query("CREATE TABLE IF NOT EXISTS #{table_name} (#{columns})")
+  end
+
+  def self.write_balances (table_name, accounts)
+    client = Mysql2::Client.new(:host => "#{@@host}", :username => "#{@@username}", :password => "#{@@password}")
+    client.query("USE #{@@db_name}")
+    values = ""
+    accounts.each do |acct|
+      values << "#{acct.balance},"
+    end
+    values.chomp!(",")
+    client.query("INSERT INTO #{table_name} VALUES (#{values})")
   end
 end

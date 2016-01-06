@@ -21,9 +21,8 @@ class Calendar
   end
 
   def run(duration, payer)
-    result = []
     duration.times { payer.day_calc @accounts }
-    result << balance_hash
+    balance_hash
   end
 
   def balance_hash
