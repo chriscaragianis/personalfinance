@@ -25,34 +25,25 @@ class DataFetcher
     accounts
   end
 
-  def self.fetch_payers
-    payer_data = []
-    payers = []
-    get_array_from_table("payers").each do |row|
-      payers << Payer.new(row)
-    end
-    payers
-  end
-
-  def self.create_balance_table(table_name, accounts)
+  def self.create_balance_table(table_name, calendar)
     client = Mysql2::Client.new(:host => "#{@@host}", :username => "#{@@username}", :password => "#{@@password}")
     client.query("USE #{@@db_name}")
     columns = ""
-    accounts.each do |acct|
+    calendar.accounts.each do |acct|
       columns << "#{acct.acct_name} FLOAT(14),"
     end
-    columns.chomp!(",")
+    columns << "payer FLOAT(14)"
     client.query("CREATE TABLE IF NOT EXISTS #{table_name} (#{columns})")
   end
 
-  def self.write_balances (table_name, accounts)
+  def self.write_balances (table_name, calendar)
     client = Mysql2::Client.new(:host => "#{@@host}", :username => "#{@@username}", :password => "#{@@password}")
     client.query("USE #{@@db_name}")
     values = ""
-    accounts.each do |acct|
+    calendar.accounts.each do |acct|
       values << "#{acct.balance},"
     end
-    values.chomp!(",")
+    values << "#{calendar.payer.balance}"
     client.query("INSERT INTO #{table_name} VALUES (#{values})")
   end
 end

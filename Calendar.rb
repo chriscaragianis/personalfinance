@@ -3,24 +3,23 @@ require 'date'
 require './DataFetcher'
 
 class Calendar
-  attr_accessor :accounts, :payers
+  attr_accessor :accounts, :payer
 
   def set_defaults
     @accounts ||= []
-    @payers ||= []
   end
 
   def initialize(params = {})
     params.each { |key,value| instance_variable_set("@#{key}", value) }
     set_defaults
+    @payer = Payer.new(balance: @payer_bal, today: @start_date)
   end
 
   def reset
     @accounts = DataFetcher.fetch_accounts
-    @payers = DataFetcher.fetch_payers
   end
 
-  def run(duration, payer)
+  def run(duration)
     duration.times { payer.day_calc @accounts }
     balance_hash
   end
