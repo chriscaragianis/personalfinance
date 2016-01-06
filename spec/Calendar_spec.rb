@@ -28,8 +28,8 @@ RSpec.describe Calendar, "#run" do
 
   before(:all) do
     @results = [{Paycheck1: 0, CC: -1200.920547, Car: -5500.904109},
-                {Paycheck1: 0, CC: -1203.3673180759445, Car: -5225.9032071091415},
-                {Paycheck1: 0, CC: -1206.74408517774, Car: -4950.50099530694}]
+                {Paycheck1: 0, CC: -1203.3673180759445, Car: -5225.853680835735},
+                {Paycheck1: 0, CC: -1206.74408517774, Car: -4950.401706077883}]
   end
 
   before(:each) do
@@ -74,10 +74,18 @@ RSpec.describe Calendar, "#balance_hash" do
 end
 
 RSpec.describe Calendar, "#AD HOC DB TEST" do
-  it "DOES A THING WITHOUT ERRORRINGGING" do
+  before(:each) do
     @calendar = Calendar.new
     @calendar.reset
+  end
+  it "DOES A THING WITHOUT ERRORRINGGING" do
     DataFetcher.create_balance_table("balances" , @calendar.accounts)
     DataFetcher.write_balances("balances", @calendar.accounts)
+  end
+  it "FILLS UP A TABLE" do
+    100.times do
+      @calendar.run(1, @calendar.payers[0])
+      DataFetcher.write_balances("balances", @calendar.accounts)
+    end
   end
 end

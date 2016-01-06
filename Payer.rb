@@ -25,8 +25,8 @@ class Payer
 
   def day_calc accounts
     accounts.each do |acct|
-      acct.compound
       pay acct, acct.bill(@today)
+      acct.compound
     end
     deduct @burn
     @today += 1

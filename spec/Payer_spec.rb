@@ -33,10 +33,10 @@ RSpec.describe Payer, "#day_calc" do
     expect(@accts[1].balance).to eq(-1010)
   end
   it "Deducts from payer balance properly" do
-    expect(@payers.map {|this| this.balance}).to eq([900, 1000, 798])
+    expect(@payers.map {|this| this.balance}).to eq([900, 1000, 800])
   end
   it "Reduces account balances properly" do
-    expect(@accts.map {|this| this.balance}).to eq([-910,-1010,-9898])
+    expect(@accts.map {|this| this.balance}).to eq([-909,-1010,-9898])
   end
   it "advances the date" do
     expect(@payers.map {|this| this.today}).to eq([Date.today + 1, Date.today + 1, Date.today + 1])
