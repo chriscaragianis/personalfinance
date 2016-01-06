@@ -1,5 +1,7 @@
+require './DataFetcher'
+
 class Payer
-  attr_accessor :balance, :today, :payer_name
+  attr_accessor :balance, :today, :payer_name, :accounts
 
   def set_defaults
     @today ||= Date.today
@@ -30,5 +32,13 @@ class Payer
     end
     deduct @burn
     @today += 1
+  end
+
+  def run(duration)
+    duration.times { day_calc @accounts }
+  end
+
+  def reset
+    @accounts = DataFetcher.fetch_accounts
   end
 end

@@ -42,3 +42,58 @@ RSpec.describe Payer, "#day_calc" do
     expect(@payers.map {|this| this.today}).to eq([Date.today + 1, Date.today + 1, Date.today + 1])
   end
 end
+
+RSpec.describe Payer, "#run" do
+
+  before(:all) do
+    @results = [{Paycheck1: 0, CC: -1200.920547, Car: -5500.904109},
+                {Paycheck1: 0, CC: -1203.3673180759445, Car: -5225.853680835735},
+                {Paycheck1: 0, CC: -1206.74408517774, Car: -4950.401706077883}]
+  end
+
+  before(:each) do
+    @payer = Payer.new(balance: 2000, today: Date.new(2016,1,1))
+    @payer.reset
+  end
+
+  it "runs one day with correct results" do
+    @payer.run(1)
+    expect(@payer.accounts[0].balance).to be_within(0.0001).of(@results[0][:Paycheck1])
+    expect(@payer.accounts[1].balance).to be_within(0.0001).of(@results[0][:CC])
+    expect(@payer.accounts[2].balance).to be_within(0.0001).of(@results[0][:Car])
+    expect(@payer.today).to eq(Date.new(2016,1,2))
+  end
+
+  it "runs 30 days with correct results" do
+    @payer.run(30)
+    expect(@payer.accounts[0].balance).to be_within(0.0001).of(@results[1][:Paycheck1])
+    expect(@payer.accounts[1].balance).to be_within(0.0001).of(@results[1][:CC])
+    expect(@payer.accounts[2].balance).to be_within(0.0001).of(@results[1][:Car])
+    expect(@payer.today).to eq(Date.new(2016,1,31))
+  end
+
+  it "runs 60 days with correct results" do
+    @payer.run(60)
+    expect(@payer.accounts[0].balance).to be_within(0.0001).of(@results[2][:Paycheck1])
+    expect(@payer.accounts[1].balance).to be_within(0.0001).of(@results[2][:CC])
+    expect(@payer.accounts[2].balance).to be_within(0.0001).of(@results[2][:Car])
+    expect(@payer.today).to eq(Date.new(2016,3,1))
+    end
+end
+
+RSpec.describe Payer, "#AD HOC DB TEST" do
+  before(:each) do
+    @payer = Payer.new(balance: 2000)
+    @payer.reset
+  end
+  it "DOES A THING WITHOUT ERRORRINGGING" do
+    DataFetcher.create_balance_table("balances" , @payer)
+    DataFetcher.write_balances("balances", @payer)
+  end
+  it "FILLS UP A TABLE" do
+    100.times do
+      @payer.run(1)
+      DataFetcher.write_balances("balances", @payer)
+    end
+  end
+end
