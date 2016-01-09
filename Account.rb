@@ -19,7 +19,11 @@ class Account
   end
 
   def amount
-    (@amount == 0) ? [@min_rate * @balance, @min_floor].max : @amount
+    if (@balance.abs <= @min_floor) then
+      return @balance.abs
+    else
+      (@amount == 0) ? [@min_rate * @balance, @min_floor].max : @amount
+    end
   end
 
   def initialize(params = {})

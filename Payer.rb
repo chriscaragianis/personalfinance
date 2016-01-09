@@ -1,4 +1,4 @@
-require './DataFetcher'
+require_relative './DataFetcher'
 
 class Payer
   attr_accessor :balance, :today, :payer_name, :accounts

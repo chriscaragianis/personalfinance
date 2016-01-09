@@ -1,11 +1,11 @@
-require './Account'
+require_relative './Account'
 require 'mysql2'
-require './FixedAccount'
+require_relative './FixedAccount'
 class DataFetcher
-  @@host = "HOST"
-  @@username = "USER"
-  @@db_name = "DB_NAME"
-  @@password = "PASSWORD"
+  @@host = "<HOST>"
+  @@username = "<USER>"
+  @@db_name = "<DB_NAME>"
+  @@password = "<PASSWORD>"
 
   def self.get_array_from_table table
     data = []
@@ -15,6 +15,7 @@ class DataFetcher
     result.each do |row|
       data << row
     end
+    client.close
     data
   end
 
@@ -36,6 +37,7 @@ class DataFetcher
     end
     columns << "payer FLOAT(14), payer_date VARCHAR(20)"
     client.query("CREATE TABLE IF NOT EXISTS #{table_name} (#{columns})")
+    client.close
   end
 
   def self.write_balances (table_name, payer)
@@ -47,5 +49,6 @@ class DataFetcher
     end
     values << "#{payer.balance}, \"#{payer.today.to_s}\""
     client.query("INSERT INTO #{table_name} VALUES (#{values})")
+    client.close
   end
 end
