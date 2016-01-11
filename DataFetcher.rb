@@ -2,10 +2,10 @@ require_relative './Account'
 require 'mysql2'
 require_relative './FixedAccount'
 class DataFetcher
-  @@host = "<HOST>"
-  @@username = "<USER>"
-  @@db_name = "<DB_NAME>"
-  @@password = "<PASSWORD>"
+  @@host = "HOST"
+  @@username = "USER"
+  @@db_name = "DB_NAME"
+  @@password = "PASSWORD"
 
   def self.get_array_from_table table
     data = []

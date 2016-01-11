@@ -25,17 +25,30 @@ class Payer
   end
 
 
-  def day_calc accounts
+  def day_calc accounts, today
     accounts.each do |acct|
-      pay acct, acct.bill(@today)
+      pay acct, acct.bill(today)
       acct.compound
     end
-    deduct @burn
-    @today += 1
+    accounts
   end
 
-  def run(duration)
-    duration.times { day_calc @accounts }
+  def day_balances accounts, today
+    day_calc(accounts, today).map {|acct| acct.balance}
+  end
+
+  def vest accounts, acct_index, vest_level
+    (@balance > vest_level) ? pay(accounts[acct_index], vest_level) : nil
+    accounts
+  end
+
+  def run(accounts, day, ctd, good_path)
+    if (ctd > 0) then
+      return [[day_balances(accounts, today)] << run(day_calc(accounts), day + 1, ctd - 1, true), true]
+    else
+      result = run(day_calc(accounts))
+      
+    end
   end
 
   def reset

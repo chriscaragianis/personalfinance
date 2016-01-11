@@ -1,4 +1,5 @@
 *.numbers
+*.sql
 *.csv
 Gemfile.lock
 /personal

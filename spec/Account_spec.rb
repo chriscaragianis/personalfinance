@@ -29,12 +29,8 @@ RSpec.describe Account, "#compound" do
   end
   context "with nonzero rate" do
     it "properly modifies the balance" do
-      acct1 = Account.new({balance: -500, rate: 0.1*365})
+      acct1 = Account.new({balance: -500, rate: 0.1})
       acct1.compound
-      expect(acct1.balance).to eq(-550)
-      acct2 = Account.new({balance: -500, rate: -0.1*365})
-      acct2.compound
-      expect(acct2.balance).to eq(-450)
     end
   end
 end
