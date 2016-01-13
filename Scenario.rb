@@ -1,13 +1,13 @@
 require_relative './DataFetcher'
 
-class Payer
-  attr_accessor :balance, :today, :payer_name, :accounts
+class Scenario
+  attr_accessor :balance, :today, :Scenario_name, :accounts
 
   def set_defaults
     @today ||= Date.today
     @balance ||= 0
     @burn ||= 0
-    @payer_name ||= "NAME"
+    @Scenario_name ||= "NAME"
   end
 
   def initialize params = {}
@@ -33,7 +33,7 @@ class Payer
     accounts
   end
 
-  def day_balances accounts, today
+  def day_balances today
     day_calc(accounts, today).map {|acct| acct.balance}
   end
 
@@ -42,16 +42,33 @@ class Payer
     accounts
   end
 
-  def run(accounts, day, ctd, good_path)
-    if (ctd > 0) then
-      return [[day_balances(accounts, today)] << run(day_calc(accounts), day + 1, ctd - 1, true), true]
-    else
-      result = run(day_calc(accounts))
-      
+  def run(start_day, finish_day)
+    result = []
+    (finish - start).times do |i|
+      result[i] = day_calc(start_day + i)
     end
+    result
   end
+
+  def get_balances
+    @accounts.map { |acct| acct.balance }
+  end
+
+  def merge_balances
+  end
+
 
   def reset
     @accounts = DataFetcher.fetch_accounts
   end
+
+  def run_balances(start_date, length)
+    result = []
+    result[0] = day_calc(@accounts, start_date).map { |acct| acct.acct_copy }
+    (length - 1).times do |i|
+      result << day_calc(result[i], start_date + i).map { |acct| acct.acct_copy }
+    end
+    result
+  end
+
 end

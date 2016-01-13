@@ -14,6 +14,10 @@ class Account
     @amount ||= 0
   end
 
+  def acct_copy
+    Account.new(amount: @amount, balance: @balance, day: @day)
+  end
+
   def compound
     @balance += @balance * @rate/365
   end
@@ -43,4 +47,7 @@ class Account
     (date.day == @day) ? amount : 0
   end
 
+  def to_s
+    return "Name: #{@name}, Balance: #{@balance}"
+  end
 end

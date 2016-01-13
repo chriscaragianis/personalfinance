@@ -28,26 +28,26 @@ class DataFetcher
     accounts
   end
 
-  def self.create_balance_table(table_name, payer)
+  def self.create_balance_table(table_name, scenario)
     client = Mysql2::Client.new(:host => "#{@@host}", :username => "#{@@username}", :password => "#{@@password}")
     client.query("USE #{@@db_name}")
     columns = ""
-    payer.accounts.each do |acct|
+    scenario.accounts.each do |acct|
       columns << "#{acct.acct_name} FLOAT(14),"
     end
-    columns << "payer FLOAT(14), payer_date VARCHAR(20)"
+    columns << "scenario FLOAT(14), scenario_date VARCHAR(20)"
     client.query("CREATE TABLE IF NOT EXISTS #{table_name} (#{columns})")
     client.close
   end
 
-  def self.write_balances (table_name, payer)
+  def self.write_balances (table_name,scenario)
     client = Mysql2::Client.new(:host => "#{@@host}", :username => "#{@@username}", :password => "#{@@password}")
     client.query("USE #{@@db_name}")
     values = ""
-    payer.accounts.each do |acct|
+    scenario.accounts.each do |acct|
       values << "#{acct.balance},"
     end
-    values << "#{payer.balance}, \"#{payer.today.to_s}\""
+    values << "#{scenario.balance}, \"#{scenario.today.to_s}\""
     client.query("INSERT INTO #{table_name} VALUES (#{values})")
     client.close
   end

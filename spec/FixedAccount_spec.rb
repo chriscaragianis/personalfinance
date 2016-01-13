@@ -1,6 +1,6 @@
 require './Account'
 require './FixedAccount'
-require './Payer'
+require './Scenario'
 require 'date'
 
 RSpec.describe FixedAccount, "#initialize" do
