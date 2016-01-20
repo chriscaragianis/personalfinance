@@ -104,31 +104,3 @@ RSpec.describe Scenario, "#vest" do
     expect(@scene.balances[0].accounts[2].balance).to eq(-300)
   end
 end
-
-RSpec.describe Scenario, "#AD HOC DB TEST" do
-  before(:each) do
-    @scenario = Scenario.new(balance: 2000)
-    @scenario.reset
-  end
-  it "DOES A THING WITHOUT ERRORRINGGING" do
-    DataFetcher.create_balance_table("balances" , @scenario)
-    DataFetcher.write_balances("balances", @scenario)
-  end
-  it "FILLS UP A TABLE" do
-    100.times do
-      @scenario.run(1)
-      DataFetcher.write_balances("balances", @scenario)
-    end
-  end
-end
-
-RSpec.describe Scenario, "CHEK IT" do
-  before (:all) do
-    @accounts = [Account.new(balance: -1000, day: Date.today.day + 1, amount: 100)]
-    @scene = Scenario.new(balance: 1000, accounts: @accounts)
-  end
-  it "does a thing" do
-    result = @scene.run_balances(Date.today, 4, @accounts)
-    expect(result.map { |row| row.map { |acct| acct.balance } }).to eq([[-1000], [-900], [-900], [-900]])
-  end
-end
