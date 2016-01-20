@@ -1,13 +1,17 @@
 require_relative './DataFetcher'
+require_relative './BalanceRecord'
 
 class Scenario
-  attr_accessor :balance, :today, :Scenario_name, :accounts
+  attr_accessor :balance, :today, :Scenario_name, :accounts, :balances
 
   def set_defaults
-    @today ||= Date.today
     @balance ||= 0
-    @burn ||= 0
+    @accounts ||= []
+    @balances ||= [BalanceRecord.new()]
     @Scenario_name ||= "NAME"
+    @today ||= Date.today
+    @vest_level ||= 0
+    @vest_targets ||= []
   end
 
   def initialize params = {}
@@ -15,60 +19,55 @@ class Scenario
     set_defaults
   end
 
-  def deduct amount
-    @balance -= amount
-  end
-
-  def pay acct, amount
-    deduct amount
-    acct.balance += amount
-  end
-
-
-  def day_calc accounts, today
-    accounts.each do |acct|
-      pay acct, acct.bill(today)
-      acct.compound
+  def day_calc bal_rec
+    accounts = []
+    balance = bal_rec.balance
+    bal_rec.accounts.each do |val|
+      new_account = val.acct_copy
+      new_account.compound
+      new_account.balance += new_account.bill(bal_rec.date)
+      balance -= new_account.bill(bal_rec.date)
+      accounts << new_account
     end
-    accounts
-  end
-
-  def day_balances today
-    day_calc(accounts, today).map {|acct| acct.balance}
-  end
-
-  def vest accounts, acct_index, vest_level
-    (@balance > vest_level) ? pay(accounts[acct_index], vest_level) : nil
-    accounts
+    BalanceRecord.new(date: bal_rec.date + 1, balance: balance, accounts: accounts)
   end
 
   def run(start_day, finish_day)
-    result = []
-    (finish - start).times do |i|
-      result[i] = day_calc(start_day + i)
+    bookmark = [0, finish_day]
+    vest = 0
+    if start_day >= finish_day then
+      return
     end
-    result
+    @balances.sort! #Usually does not need to be done, check outside method
+    start_index = @balances.index { |balrec| balrec.date == start_day } || 0
+    (finish_day - start_day).to_i.times do |i|
+      @balances[start_index + i + 1] = day_calc @balances[start_index + i]
+      if (i == 0 || @balances[start_index + i].balance < @vest_level) && @balances[start_index + i + 1].balance > @vest_level then
+        bookmark = [i + 1, @balances[start_index + i + 1].date]
+        vest = @vest_level
+      end
+    end
+    vest(start_index + bookmark[0], vest)
+    run(bookmark[1], finish_day)
   end
 
-  def get_balances
-    @accounts.map { |acct| acct.balance }
+  def vest index, amount
+    if (@vest_targets == []) then
+      return
+    end
+    @balances[index].balance -= amount
+    @balances[index].accounts[@vest_targets[0]].balance += amount
+    if (@balances[index].accounts[@vest_targets[0]].balance >= 0) then
+      left = @balances[index].accounts[@vest_targets[0]].balance
+      @balances[index].balance += left
+      @balances[index].accounts[@vest_targets[0]].balance = 0
+      @vest_targets.shift ? vest(index, left) : return
+    end
   end
-
-  def merge_balances
-  end
-
 
   def reset
     @accounts = DataFetcher.fetch_accounts
-  end
-
-  def run_balances(start_date, length)
-    result = []
-    result[0] = day_calc(@accounts, start_date).map { |acct| acct.acct_copy }
-    (length - 1).times do |i|
-      result << day_calc(result[i], start_date + i).map { |acct| acct.acct_copy }
-    end
-    result
+    @balances[0] = BalanceRecord.new(date: @today, balance: @balance, accounts: @accounts)
   end
 
 end
