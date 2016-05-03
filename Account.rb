@@ -1,5 +1,5 @@
 class Account
-  attr_accessor :balance, :acct_name, :rate
+  attr_accessor :balance, :acct_name, :rate, :min_floor
 
   def set_defaults
     @rate ||= 0
@@ -11,29 +11,27 @@ class Account
     @week_offset ||= 0
     @week_period ||= 0
     @day ||= 0
-    @amount ||= 0
   end
 
   def acct_copy
-    (self.class == FixedAccount) ?
-    FixedAccount.new(amount: @amount, balance: @balance, day: @day, min_floor: @min_floor,
+    Account.new(fixed_amount: @fixed_amount, balance: @balance, day: @day, min_floor: @min_floor,
                 min_rate: @min_rate, weekly: @weekly, week_offset: @week_offset,
-                week_period: @week_period, rate: @rate)
-    :
-    Account.new(amount: @amount, balance: @balance, day: @day, min_floor: @min_floor,
-                min_rate: @min_rate, weekly: @weekly, week_offset: @week_offset,
-                week_period: @week_period, rate: @rate)
+                week_period: @week_period, rate: @rate, carry_balance: @carry_balance)
   end
 
   def compound
-    @balance += @balance * @rate/365
+    if (!carry_balance)
+      @balance += @balance * @rate/365
+    else
+      @balance = 0
+    end
   end
 
   def amount
     if (@balance.abs <= @min_floor) then
       return @balance.abs
     else
-      (@amount == 0) ? [@min_rate * @balance, @min_floor].max : @amount
+      (@fixed_amount == 0) ? [@min_rate * @balance, @min_floor].max : @amount
     end
   end
 
@@ -55,6 +53,6 @@ class Account
   end
 
   def to_s
-    return "Name: #{@name}, Balance: #{@balance}, MinRate: #{@min_rate}"
+    return "Name: #{@name}, Balance: #{@balance}"
   end
 end
